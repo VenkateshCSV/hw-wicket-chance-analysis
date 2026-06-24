@@ -146,6 +146,7 @@
   <button class="tab-btn" onclick="switchTab('innings', this)">Full Innings</button>
   <button class="tab-btn" onclick="switchTab('init2', this)">First 2 Overs</button>
   <button class="tab-btn" onclick="switchTab('shotsel', this)">Shot Selection</button>
+  <button class="tab-btn" onclick="switchTab('pwrbracket', this)">Power Brackets</button>
 </div>
 
 <!-- ══════════════ OVERVIEW TAB ══════════════ -->
@@ -601,6 +602,141 @@
   </main>
 </div>
 
+<!-- ══════════════ POWER BRACKETS TAB ══════════════ -->
+<div id="tab-pwrbracket" class="tab-content">
+  <main>
+    <div class="section">
+      <div class="section-header">
+        <p class="section-num">01 — Power Bracket View</p>
+        <h3 class="section-title">Match behaviour split by player power bracket</h3>
+        <p class="section-sub">Power brackets reflect matchmaking context (opponent power ratio). 8 brackets: 0–25k through 130k+. Note: 0–25k and high extreme brackets have low test sample — treat directionally.</p>
+      </div>
+
+      <div class="sub-toggle" id="pwr-subtoggle">
+        <button class="sub-btn active" onclick="switchPwr('ov', this)">Overall</button>
+        <button class="sub-btn" onclick="switchPwr('1st', this)">First Batting</button>
+        <button class="sub-btn" onclick="switchPwr('2nd', this)">Second Batting</button>
+        <button class="sub-btn" onclick="switchPwr('i2', this)">Overs 1–2 Combined</button>
+        <button class="sub-btn" onclick="switchPwr('i2f', this)">Overs 1–2 First Bat</button>
+        <button class="sub-btn" onclick="switchPwr('i2s', this)">Overs 1–2 Second Bat</button>
+      </div>
+
+      <div id="pwrsub-ov">
+        <div class="kpi-row-4">
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 110k–120k</p><p class="kpi-value down">−43.6%</p><p class="kpi-note">1.72 → 0.97 · sharpest drop</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 75k–100k</p><p class="kpi-value down">−35.1%</p><p class="kpi-note">1.71 → 1.11</p></div>
+          <div class="kpi-card"><p class="kpi-label">Score Δ — 100k–110k</p><p class="kpi-value down">−19.8%</p><p class="kpi-note">49.35 → 39.56</p></div>
+          <div class="kpi-card"><p class="kpi-label">Score Δ — 50k–75k</p><p class="kpi-value down">−15.0%</p><p class="kpi-note">45.52 → 38.69</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><p class="card-title">Mean Wickets — Base vs Test (Overall)</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-ov-wk"></canvas></div></div>
+          <div class="card"><p class="card-title">Mean Score — Base vs Test (Overall)</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-ov-sc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Wicket & Score Delta % — Overall</p><div class="chart-wrap" style="height:200px"><canvas id="cpwr-ov-dl"></canvas></div></div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Full comparison — Overall</p><table class="comp-table"><thead><tr><th>Bracket</th><th class="base">Base Score</th><th class="test">Test Score</th><th class="delta">Δ Score</th><th class="base">Base Wickets</th><th class="test">Test Wickets</th><th class="delta">Δ Wickets</th><th class="base">Base Balls</th><th class="test">Test Balls</th></tr></thead><tbody id="ptb-ov"></tbody></table></div>
+        <div style="margin-top:1rem" class="insights">
+          <div class="insight bad"><strong>Mid-power brackets (75k–120k) take the hardest wicket hit:</strong> 110k–120k sees −43.6% wickets, the largest across all brackets. These are the most competitive matchmaking tiers.</div>
+          <div class="insight warn"><strong>Scores compress across all brackets:</strong> Mean scores down −13% to −20% everywhere, driven by first-innings target collapse.</div>
+        </div>
+      </div>
+
+      <div id="pwrsub-1st" style="display:none">
+        <div class="kpi-row-4">
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 100k–110k</p><p class="kpi-value up">+27.6%</p><p class="kpi-note">1.96 → 2.50</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 120k–130k</p><p class="kpi-value up">+20.2%</p><p class="kpi-note">2.08 → 2.50</p></div>
+          <div class="kpi-card"><p class="kpi-label">Score Δ — 120k–130k</p><p class="kpi-value down">−17.0%</p><p class="kpi-note">53.28 → 44.20</p></div>
+          <div class="kpi-card"><p class="kpi-label">Score Δ — 110k–120k</p><p class="kpi-value down">−14.6%</p><p class="kpi-note">55.24 → 47.17</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><p class="card-title">Mean Wickets — First Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-1st-wk"></canvas></div></div>
+          <div class="card"><p class="card-title">Mean Score — First Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-1st-sc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Wicket & Score Delta % — First Batting</p><div class="chart-wrap" style="height:200px"><canvas id="cpwr-1st-dl"></canvas></div></div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Full comparison — First Batting</p><table class="comp-table"><thead><tr><th>Bracket</th><th class="base">Base Score</th><th class="test">Test Score</th><th class="delta">Δ Score</th><th class="base">Base Wickets</th><th class="test">Test Wickets</th><th class="delta">Δ Wickets</th><th class="base">Base Balls</th><th class="test">Test Balls</th></tr></thead><tbody id="ptb-1st"></tbody></table></div>
+        <div style="margin-top:1rem" class="insights">
+          <div class="insight good"><strong>Feature firing consistently in 1st batting across mid-high brackets:</strong> Wickets up at 25k–50k (+11%), 50k–75k (+14%), 75k–100k (+13%), 100k–110k (+28%), 120k–130k (+20%), 130k+ (+19%). Mechanism working as intended.</div>
+          <div class="insight warn"><strong>0–25k bracket unreliable:</strong> Single-digit test matches. Exclude from conclusions.</div>
+        </div>
+      </div>
+
+      <div id="pwrsub-2nd" style="display:none">
+        <div class="kpi-row-4">
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 110k–120k</p><p class="kpi-value down">−39.1%</p><p class="kpi-note">1.51 → 0.92 · sharpest</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 100k–110k</p><p class="kpi-value down">−31.2%</p><p class="kpi-note">1.54 → 1.06</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 75k–100k</p><p class="kpi-value down">−28.7%</p><p class="kpi-note">1.50 → 1.07</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 25k–50k</p><p class="kpi-value down">−20.0%</p><p class="kpi-note">1.65 → 1.32 · mildest mid</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><p class="card-title">Mean Wickets — Second Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-2nd-wk"></canvas></div></div>
+          <div class="card"><p class="card-title">Mean Score — Second Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-2nd-sc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Wicket & Score Delta % — Second Batting</p><div class="chart-wrap" style="height:200px"><canvas id="cpwr-2nd-dl"></canvas></div></div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Full comparison — Second Batting</p><table class="comp-table"><thead><tr><th>Bracket</th><th class="base">Base Score</th><th class="test">Test Score</th><th class="delta">Δ Score</th><th class="base">Base Wickets</th><th class="test">Test Wickets</th><th class="delta">Δ Wickets</th><th class="base">Base Balls</th><th class="test">Test Balls</th></tr></thead><tbody id="ptb-2nd"></tbody></table></div>
+        <div style="margin-top:1rem" class="insights">
+          <div class="insight bad"><strong>Defensive adaptation strongest at 75k–120k in 2nd batting:</strong> These mid-high brackets show the largest wicket drops. Players here are most target-aware and adjust shot selection immediately when chasing a low score.</div>
+          <div class="insight"><strong>Lower brackets adapt less:</strong> 0–25k and 25k–50k show milder wicket drops (−14% to −20%) — lower-power players continue playing their natural game regardless of target.</div>
+        </div>
+      </div>
+
+      <div id="pwrsub-i2" style="display:none">
+        <div class="kpi-row-4">
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 110k–120k (Overs 1–2)</p><p class="kpi-value down">−29.7%</p><p class="kpi-note">0.74 → 0.52</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 100k–110k</p><p class="kpi-value down">−25.7%</p><p class="kpi-note">0.74 → 0.55</p></div>
+          <div class="kpi-card"><p class="kpi-label">Score Δ — All brackets</p><p class="kpi-value up">+10–17%</p><p class="kpi-note">Combined — 2nd bat defensive pull</p></div>
+          <div class="kpi-card"><p class="kpi-label">Balls Faced Δ</p><p class="kpi-value neutral">~flat</p><p class="kpi-note">Near zero across all brackets</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><p class="card-title">Wickets — Overs 1–2 Combined</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-i2-wk"></canvas></div></div>
+          <div class="card"><p class="card-title">Score — Overs 1–2 Combined</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-i2-sc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Wicket & Score Delta % — Overs 1–2 Combined</p><div class="chart-wrap" style="height:200px"><canvas id="cpwr-i2-dl"></canvas></div></div>
+        <div style="margin-top:1rem" class="insights">
+          <div class="insight"><strong>Combined view masks innings asymmetry:</strong> Score rising (2nd bat chasing defensively) while wickets fall (combined effect). Switch to First/Second Bat views for the cleaner split.</div>
+        </div>
+      </div>
+
+      <div id="pwrsub-i2f" style="display:none">
+        <div class="kpi-row-4">
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 100k–110k</p><p class="kpi-value up">+78.8%</p><p class="kpi-note">0.80 → 1.43 · small sample</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 110k–120k</p><p class="kpi-value up">+56.3%</p><p class="kpi-note">0.80 → 1.25</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 50k–75k</p><p class="kpi-value up">+36.1%</p><p class="kpi-note">0.86 → 1.17</p></div>
+          <div class="kpi-card"><p class="kpi-label">0–25k bracket</p><p class="kpi-value warn">Exclude</p><p class="kpi-note">Single-digit test sample</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><p class="card-title">Wickets — Overs 1–2, First Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-i2f-wk"></canvas></div></div>
+          <div class="card"><p class="card-title">Score — Overs 1–2, First Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-i2f-sc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Wicket & Score Delta % — Overs 1–2 First Batting</p><div class="chart-wrap" style="height:200px"><canvas id="cpwr-i2f-dl"></canvas></div></div>
+        <div style="margin-top:1rem" class="insights">
+          <div class="insight good"><strong>Feature fires strongest in overs 1–2 of first batting at mid-high brackets:</strong> Wickets up +20–79% across 25k–130k+ (exclude 0–25k). Mechanism fires mechanically before any shot-selection adaptation occurs.</div>
+        </div>
+      </div>
+
+      <div id="pwrsub-i2s" style="display:none">
+        <div class="kpi-row-4">
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 110k–120k</p><p class="kpi-value down">−27.9%</p><p class="kpi-note">0.68 → 0.49</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 100k–110k</p><p class="kpi-value down">−24.6%</p><p class="kpi-note">0.69 → 0.52</p></div>
+          <div class="kpi-card"><p class="kpi-label">Wickets Δ — 75k–100k</p><p class="kpi-value down">−16.7%</p><p class="kpi-note">0.66 → 0.55</p></div>
+          <div class="kpi-card"><p class="kpi-label">Score Δ — All brackets</p><p class="kpi-value up">+10–16%</p><p class="kpi-note">Chasing teams scoring easily</p></div>
+        </div>
+        <div class="two-col">
+          <div class="card"><p class="card-title">Wickets — Overs 1–2, Second Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-i2s-wk"></canvas></div></div>
+          <div class="card"><p class="card-title">Score — Overs 1–2, Second Batting</p><div class="legend"><span class="leg"><span class="leg-sq" style="background:#378ADD"></span>Base</span><span class="leg"><span class="leg-sq" style="background:#1D9E75"></span>Test</span></div><div class="chart-wrap" style="height:230px"><canvas id="cpwr-i2s-sc"></canvas></div></div>
+        </div>
+        <div class="card" style="margin-top:1.25rem"><p class="card-title">Wicket & Score Delta % — Overs 1–2 Second Batting</p><div class="chart-wrap" style="height:200px"><canvas id="cpwr-i2s-dl"></canvas></div></div>
+        <div style="margin-top:1rem" class="insights">
+          <div class="insight bad"><strong>Mid-high brackets adapt from ball 1 of the chase:</strong> 100k–120k shows wicket drops of −25% to −28% in the very first 2 overs. These players read the low target immediately and switch to conservative play from the opening ball.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+    </div>
+  </main>
+</div>
+
 <footer>Increased Wicket Chance A/B Test · Match-level analysis only · Hitwicket Analytics · Jun 2026</footer>
 
 <script>
@@ -748,6 +884,7 @@ function switchTab(name, btn) {
   if (name === 'innings' && !charts['chart-in-ov-wk']) initInningsCharts();
   if (name === 'init2' && !charts['chart-i2-comb-wk']) initInit2Charts();
   if (name === 'shotsel' && !charts['chart-ss-ov-dist']) initShotCharts();
+  if (name === 'pwrbracket' && !pwrInited['ov']) initPwrTab();
 }
 
 function switchInnings(sub, btn) {
@@ -821,6 +958,73 @@ function initShotCharts() {
 
 // Init
 initOverviewCharts();
+
+// ── Power Bracket Data ──
+const BRACKETS = ['0-25k','25k-50k','50k-75k','75k-100k','100k-110k','110k-120k','120k-130k','130k+'];
+const PD = {
+  ov:  { base:{total:[49.95,46.09,45.52,47.53,49.35,50.09,48.37,48.66], balls:[24.72,24.41,24.58,25.43,25.73,25.75,25.48,24.86], wickets:[2.02,1.9,1.78,1.71,1.74,1.72,1.85,1.89]}, test:{total:[42.85,39.95,38.69,39.09,39.56,40.73,39.98,39.83], balls:[19.96,18.54,18.48,19.51,19.61,19.34,19.44,19.36], wickets:[1.55,1.34,1.18,1.11,1.11,0.97,1.21,1.25]}, dwk:[-23.27,-29.47,-33.71,-35.09,-36.21,-43.6,-34.59,-33.86], dsc:[-14.21,-13.32,-15.0,-17.76,-19.84,-18.69,-17.35,-18.15] },
+  '1st':{ base:{total:[56.28,51.35,50.63,52.58,54.52,55.24,53.28,53.84], balls:[27.85,28.22,27.87,27.9,28.17,28.19,27.93,26.93], wickets:[2.38,2.34,2.14,1.94,1.96,1.97,2.08,2.1]}, test:{total:[57.0,47.37,49.19,51.06,50.79,47.17,44.2,49.57], balls:[25.0,27.56,28.16,27.91,28.86,25.67,27.9,25.71], wickets:[2.0,2.6,2.44,2.19,2.5,2.0,2.5,2.5]}, dwk:[-15.97,11.11,14.02,12.89,27.55,1.52,20.19,19.05], dsc:[1.28,-7.75,-2.84,-2.89,-6.84,-14.61,-17.04,-7.93] },
+  '2nd':{ base:{total:[45.95,43.04,42.05,43.07,44.69,45.53,44.15,43.62], balls:[22.75,22.2,22.33,23.26,23.54,23.59,23.39,22.85], wickets:[1.8,1.65,1.54,1.5,1.54,1.51,1.64,1.69]}, test:{total:[42.72,39.88,38.5,38.6,39.15,40.46,39.81,39.41], balls:[19.91,18.46,18.3,19.16,19.27,19.07,19.09,19.09], wickets:[1.55,1.32,1.15,1.07,1.06,0.92,1.16,1.2]}, dwk:[-13.89,-20.0,-25.32,-28.67,-31.17,-39.07,-29.27,-28.99], dsc:[-7.03,-7.34,-8.44,-10.38,-12.4,-11.14,-9.83,-9.65] },
+  i2:  { base:{total:[23.21,22.73,22.54,22.26,22.35,22.54,21.8,22.63], balls:[11.78,11.74,11.67,11.64,11.68,11.7,11.64,11.41], wickets:[0.92,0.87,0.78,0.71,0.74,0.74,0.82,0.85]}, test:{total:[26.68,26.05,25.3,24.5,24.89,25.33,25.51,25.84], balls:[11.94,11.77,11.71,11.68,11.73,11.72,11.73,11.64], wickets:[0.79,0.79,0.67,0.56,0.55,0.52,0.65,0.73]}, dwk:[-14.13,-9.2,-14.1,-21.13,-25.68,-29.73,-20.73,-14.12], dsc:[14.95,14.61,12.24,10.06,11.36,12.38,17.02,14.18] },
+  i2f: { base:{total:[22.28,21.2,21.69,22.08,22.22,22.34,21.32,22.29], balls:[11.73,11.7,11.63,11.63,11.71,11.73,11.66,11.32], wickets:[1.03,0.98,0.86,0.76,0.8,0.8,0.88,0.88]}, test:{total:[34.0,21.84,19.51,19.91,20.07,17.42,17.2,19.43], balls:[12.0,11.63,11.77,11.61,12.0,11.17,12.0,10.5], wickets:[0.0,1.21,1.17,0.97,1.43,1.25,1.2,1.07]}, dwk:[-100.0,23.47,36.05,27.63,78.75,56.25,36.36,21.59], dsc:[52.6,3.02,-10.05,-9.83,-9.68,-22.02,-19.32,-12.83] },
+  i2s: { base:{total:[23.78,23.63,23.12,22.42,22.47,22.73,22.21,22.97], balls:[11.81,11.76,11.7,11.65,11.65,11.67,11.61,11.5], wickets:[0.86,0.8,0.72,0.66,0.69,0.68,0.77,0.81]}, test:{total:[26.61,26.09,25.4,24.69,25.06,25.67,25.84,26.12], balls:[11.94,11.77,11.71,11.68,11.73,11.74,11.72,11.69], wickets:[0.79,0.78,0.66,0.55,0.52,0.49,0.63,0.72]}, dwk:[-8.14,-2.5,-8.33,-16.67,-24.64,-27.94,-18.18,-11.11], dsc:[11.9,10.41,9.86,10.12,11.53,12.93,16.34,13.71] }
+};
+
+const pwrInited = {};
+
+function mkDualDeltaBar(id, labels, d1, d2, l1, l2, c1, c2) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  charts[id] = new Chart(ctx, { type:'bar', data:{ labels, datasets:[
+    {label:l1, data:d1, backgroundColor:d1.map(v=>v>=0?c1+'99':CORAL+'99'), borderColor:d1.map(v=>v>=0?c1:CORAL), borderWidth:1, borderRadius:2},
+    {label:l2, data:d2, backgroundColor:d2.map(v=>v>=0?c2+'99':CORAL+'99'), borderColor:d2.map(v=>v>=0?c2:CORAL), borderWidth:1, borderRadius:2}
+  ]}, options:{ responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:true, position:'bottom', labels:{font:{size:11},boxWidth:10}} },
+    scales:{ x:{grid:{display:false}, ticks:{font:{size:10}}}, y:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{callback:v=>v+'%', font:{size:11}}} }
+  }});
+}
+
+function buildPwrTable(tbodyId, b, t) {
+  const tb = document.getElementById(tbodyId);
+  if (!tb) return;
+  let html = '';
+  BRACKETS.forEach((r,i) => {
+    const ds = ((t.total[i]-b.total[i])/b.total[i]*100).toFixed(1);
+    const dw = ((t.wickets[i]-b.wickets[i])/b.wickets[i]*100).toFixed(1);
+    const sc = parseFloat(ds)<0?'val-down':'val-up';
+    const wc = parseFloat(dw)>0?'val-up':'val-down';
+    html += `<tr><td>${r}</td><td>${b.total[i]}</td><td>${t.total[i]}</td><td class="${sc}">${parseFloat(ds)>0?'+':''}${ds}%</td><td>${b.wickets[i]}</td><td>${t.wickets[i]}</td><td class="${wc}">${parseFloat(dw)>0?'+':''}${dw}%</td><td>${b.balls[i]}</td><td>${t.balls[i]}</td></tr>`;
+  });
+  tb.innerHTML = html;
+}
+
+function initPwrSub(sub) {
+  if (pwrInited[sub]) return;
+  pwrInited[sub] = true;
+  const p = PD[sub];
+  mkGroupedBar(`cpwr-${sub}-wk`, BRACKETS, p.base.wickets, p.test.wickets, 'Base','Test', BLUE, TEAL);
+  mkGroupedBar(`cpwr-${sub}-sc`, BRACKETS, p.base.total, p.test.total, 'Base','Test', BLUE, TEAL);
+  mkDualDeltaBar(`cpwr-${sub}-dl`, BRACKETS, p.dwk, p.dsc, 'Wickets Δ%','Score Δ%', TEAL, BLUE);
+  if (document.getElementById(`ptb-${sub}`)) buildPwrTable(`ptb-${sub}`, p.base, p.test);
+}
+
+function switchPwr(sub, btn) {
+  ['ov','1st','2nd','i2','i2f','i2s'].forEach(s => {
+    const el = document.getElementById('pwrsub-'+s);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById('pwrsub-'+sub);
+  if (target) target.style.display = 'block';
+  btn.closest('.sub-toggle').querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  initPwrSub(sub);
+}
+
+function initPwrTab() {
+  // Only init the first visible sub-view (ov)
+  initPwrSub('ov');
+}
 </script>
 </body>
 </html>
